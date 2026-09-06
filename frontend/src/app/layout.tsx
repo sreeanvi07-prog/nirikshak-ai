@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 
 export const metadata: Metadata = {
   title: "NIRIKSHAK AI — MPLADS Integrity Platform",
@@ -13,9 +14,42 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html
+      lang="en"
+      dir="ltr"
+      className="h-full"
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+  const root = document.documentElement;
+
+  try {
+    const storedLanguage = localStorage.getItem("nirikshak_lang");
+    const language =
+      storedLanguage === "en" ||
+      storedLanguage === "hi" ||
+      storedLanguage === "ta" ||
+      storedLanguage === "ur"
+        ? storedLanguage
+        : "en";
+
+    root.lang = language;
+    root.dir = language === "ur" ? "rtl" : "ltr";
+  } catch {
+    root.lang = "en";
+    root.dir = "ltr";
+  }
+})();`,
+          }}
+        />
+      </head>
       <body className="h-full antialiased selection:bg-blue-500 selection:text-white">
-        <AppShell>{children}</AppShell>
+        <LanguageProvider>
+          <AppShell>{children}</AppShell>
+        </LanguageProvider>
       </body>
     </html>
   );
